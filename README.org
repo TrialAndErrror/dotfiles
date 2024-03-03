@@ -15,6 +15,11 @@ Assuming you're on debian and already have emacs:
 sudo nala install awesome compton nitrogen xfce4-terminal rofi arandr
 #+END_SRC
 
+If you don't use [[https://github.com/volitank/nala][nala]], then you should consider using it. It's pretty great.
+But if you can't, apt should work just fine for these.
+
+[[https://github.com/haad/arandr][arandr]] isn't required but it's an easy way to fix display issues.
+
 If you don't use emacs, set =$EDITOR= in your shell config to have it open things in your favorite editor.
 
 ** Collect Dotfiles from this repo
