@@ -30,4 +30,4 @@ MiscShowUnsafePasteDialog=FALSE
 MiscRightClickAction=TERMINAL_RIGHT_CLICK_ACTION_CONTEXT_MENU
 BackgroundDarkness=0.560000
 FontName=BlexMono Nerd Font 12
-scr0pp
+ScrollingBar=TERMINAL_SCROLLBAR_NONE
