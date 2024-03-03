@@ -8,10 +8,11 @@ It's a dotfiles repo, so it's got dotfiles in it.
 - nitrogen
 - emacs + emacsclient
 - xfce4-terminal
+- arandr
 
 Assuming you're on debian and already have emacs:
 #+BEGIN_SRC bash
-sudo nala install awesomewm compton nitrogen xfce4-terminal
+sudo nala install awesome compton nitrogen xfce4-terminal rofi arandr
 #+END_SRC
 
 ** Collect Dotfiles from this repo
@@ -20,7 +21,7 @@ sudo nala install awesomewm compton nitrogen xfce4-terminal
 
 #+BEGIN_SRC bash
 wget -P ~/.config/awesome/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/awesome/rc.lua
-wget -P ~/.config/awesome/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/rofi/config.rasi
+wget -P ~/.config/rofi/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/rofi/config.rasi
 #+END_SRC
 
 ** Setup
@@ -29,5 +30,9 @@ wget -P ~/.config/awesome/ https://raw.githubusercontent.com/TrialAndErrror/dotf
 #+BEGIN_SRC bash
 git clone https://github.com/lr-tech/rofi-themes-collection.git
 cp rofi-themes-collection/themes/* ~/.local/share/rofi/themes/
-rofi-theme-selector
+#+END_SRC
+
+- Remove scrollbars on Xfce4-terminal
+#+BEGIN_SRC bash
+echo "ScrollingBar=TERMINAL_SCROLLBAR_NONE" >> ~/.config/xfce4/terminal/terminalrc
 #+END_SRC
