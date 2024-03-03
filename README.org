@@ -1,0 +1,20 @@
+* Overview
+It's a dotfiles repo, so it's got dotfiles in it.
+
+* Setting up Awesome Window Manager
+** Install dependencies
+- awesomewm
+- compton
+- nitrogen
+- emacs + emacsclient
+- xfce4-terminal
+
+Assuming you're on debian and already have emacs:
+=sudo nala install awesomewm compton nitrogen xfce4-terminal=
+
+** Collect Dotfiles from this repo
+- ~/.config/awesome/rc.lua
+- ~/.config/rofi/rc.lua
+
+** Setup
+- Download [[https://github.com/newmanls/rofi-themes-collection][rofi themes]] and copy them to ~/.local/share/rofi/themes
