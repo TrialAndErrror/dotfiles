@@ -16,5 +16,12 @@ Assuming you're on debian and already have emacs:
 - ~/.config/awesome/rc.lua
 - ~/.config/rofi/rc.lua
 
+=wget -P ~/.config/awesome/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/awesome/rc.lua=
+=wget -P ~/.config/awesome/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/rofi/config.rasi=
+
 ** Setup
 - Download [[https://github.com/newmanls/rofi-themes-collection][rofi themes]] and copy them to ~/.local/share/rofi/themes
+
+=git clone https://github.com/lr-tech/rofi-themes-collection.git=
+=cp rofi-themes-collection/themes/* ~/.local/share/rofi/themes/=
+=rofi-theme-selector=
