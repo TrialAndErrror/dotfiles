@@ -29,6 +29,7 @@ wget -P ~/.config/rofi/ https://raw.githubusercontent.com/TrialAndErrror/dotfile
 
 #+BEGIN_SRC bash
 git clone https://github.com/lr-tech/rofi-themes-collection.git
+mkdir -p ~/.local/share/rofi/themes/
 cp rofi-themes-collection/themes/* ~/.local/share/rofi/themes/
 #+END_SRC
 
