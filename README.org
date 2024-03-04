@@ -39,23 +39,16 @@ wget -P ~/.config/xfce4/terminal https://raw.githubusercontent.com/TrialAndErrro
 =terminalrc= just has one extra setting for removing scrollbars from the terminal.
 =rofi= controls the run menu
 
-** Setup
-*** Download [[https://github.com/newmanls/rofi-themes-collection][rofi themes]] and copy them to ~/.local/share/rofi/themes
-
-The default theme comes from the rofi-themes-collection, so you either need to download the theme or remove the reference in config.rasi.
-Don't forget to use rofi-theme-selector for quick access to changing out themes.
-
-#+BEGIN_SRC bash
-git clone https://github.com/lr-tech/rofi-themes-collection.git
-mkdir -p ~/.local/share/rofi/themes/
-cp rofi-themes-collection/themes/* ~/.local/share/rofi/themes/
-#+END_SRC
-
+** Optional Extras
 
 *** Setup emacs transparency
 - =(add-to-list 'default-frame-alist '(alpha . 90))= added to your doom emacs =config.el= will do the trick
   - Alternatively, =(setq default-frame-alist '((alpha . 90)))= seems to work.
 - =(scroll-bar-mode -1)= to get rid of that obtrusive scroll bar
+
+*** Add Themes
+
+Check out the cool themes over at [[https://github.com/newmanls/rofi-themes-collection][rofi-themes-collection]]
 
 ** Usage
 Everything you should need to tinker with start from rc.lua. The main changes I made were to keybindings and padding. Be sure to look at the added sections at the bottom for autostart applications and layout config.
