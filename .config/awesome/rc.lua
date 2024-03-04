@@ -582,14 +582,11 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
-
--- Autostart Applications
-
 -- Configure display
--- awful.spawn.with_shell("bash /home/wade/.screenlayout/default.sh")
-
+awful.spawn.with_shell("bash /home/wade/.screenlayout/default.sh")
+--
+-- Autostart Applications
 awful.spawn.with_shell("bash ~/.config/awesome/autorun.sh")
--- My Beautiful Settings
-beautiful.useless_gap = 5
-beautiful.gap_single_client = true
 
+-- My Beautiful Settings
+-- see theme.lua
