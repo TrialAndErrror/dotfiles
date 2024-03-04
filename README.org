@@ -54,6 +54,3 @@ Check out the cool themes over at [[https://github.com/newmanls/rofi-themes-coll
 Everything you should need to tinker with start from rc.lua. The main changes I made were to keybindings and padding. Be sure to look at the added sections at the bottom for autostart applications and layout config.
 
 If you're not familiar with awesomewm, just hit super + s to get contextual keyboard shortcuts.
-
-I manually set up terminal transparency in the Preferences section of my xfce4-terminal;
-feel free to put up a PR if you have a suggestion for a config file that would handle that by default.
