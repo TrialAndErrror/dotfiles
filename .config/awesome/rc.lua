@@ -603,9 +603,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Configure display
 -- awful.spawn.with_shell("bash /home/wade/.screenlayout/default.sh")
 
-awful.spawn.with_shell("compton")
-awful.spawn.with_shell("nitrogen --restore")
-
+awful.spawn.with_shell("bash ~/.config/awesome/autorun.sh")
 -- My Beautiful Settings
 beautiful.useless_gap = 5
 beautiful.gap_single_client = true
