@@ -53,10 +53,9 @@ cp rofi-themes-collection/themes/* ~/.local/share/rofi/themes/
 
 
 *** Setup emacs transparency
-=(add-to-list 'default-frame-alist '(alpha . 90))= added to your doom emacs =config.el= will do the trick
-Alternatively, =(setq default-frame-alist '((alpha . 90)))= seems to work.
-
-=(scroll-bar-mode -1)= to get rid of that obtrusive scroll bar
+- =(add-to-list 'default-frame-alist '(alpha . 90))= added to your doom emacs =config.el= will do the trick
+  - Alternatively, =(setq default-frame-alist '((alpha . 90)))= seems to work.
+- =(scroll-bar-mode -1)= to get rid of that obtrusive scroll bar
 
 ** Usage
 Everything you should need to tinker with start from rc.lua. The main changes I made were to keybindings and padding. Be sure to look at the added sections at the bottom for autostart applications and layout config.
