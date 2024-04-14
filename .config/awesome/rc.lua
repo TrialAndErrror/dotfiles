@@ -50,7 +50,7 @@ end
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 -- TODO: Set up correct desktops
-beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+beautiful.init("~/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "xfce4-terminal"
@@ -58,6 +58,10 @@ editor = os.getenv("EDITOR") or "emacsclient -c -a ''"
 browser = os.getenv("BROWSER") or "firefox"
 editor_cmd = terminal .. editor
 browser_cmd = terminal .. browser
+
+default_ide_command = terminal .. "pycharm-professional"
+default_db_command = terminal .. "datagrip"
+default_git_command = terminal .. "gitkraken"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -286,6 +290,14 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "b", function () awful.spawn(browser) end,
               {description = "open default browser", group = "launcher"}),
 
+    awful.key({ modkey, "Shift"   }, "p", function () awful.spawn(default_ide_command) end,
+              {description = "open default IDE", group = "launcher"}),
+
+    awful.key({ modkey, "Shift"   }, "d", function () awful.spawn(default_db_command) end,
+              {description = "open default DB explorer", group = "launcher"}),
+
+    awful.key({ modkey, "Shift"   }, "g", function () awful.spawn(default_git_command) end,
+              {description = "open default Git explorer", group = "launcher"}),
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
@@ -579,9 +591,6 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
--- Configure display
-awful.spawn.with_shell("bash /home/wade/.screenlayout/default.sh")
---
 -- Autostart Applications
 awful.spawn.with_shell("bash ~/.config/awesome/autorun.sh")
 

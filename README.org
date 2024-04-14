@@ -13,12 +13,15 @@ This setup includes steps for doom emacs, but you can safely skip those if you d
 - arandr
 
 Assuming you're on debian and already have emacs:
-#+BEGIN_SRC bash
+#+BEGIN_SRC bash :tangle setup_configs.sh
+
+# Install required dependencies
 sudo nala install awesome compton nitrogen xfce4-terminal rofi arandr
+
 #+END_SRC
 
 If you don't use [[https://github.com/volitank/nala][nala]], then you should consider using it. It's pretty great.
-But if you can't, apt should work just fine for these.
+But if you can't, apt will work just fine.
 
 [[https://github.com/haad/arandr][arandr]] isn't required but it's an easy way to fix display issues.
 
@@ -26,20 +29,73 @@ If you don't use emacs, set =$EDITOR= in your shell config to have it open thing
 
 ** Collect Dotfiles from this repo
 - ~/.config/awesome/rc.lua
+- ~/.config/awesome/theme.lua
 - ~/.config/rofi/config.rasi
 - ~/.config/xfce4/terminal/terminalrc
 
-Example:
-#+BEGIN_SRC bash
+During the download process, it will copy any existing config files with an =.old= extension, so that you can recover any configs that would have been overwritten.
+
+#+BEGIN_SRC bash :tangle setup_configs.sh
+
+# Download and install config files
+
+[ -f ~/.config/awesome/rc.lua ] && mv ~/.config/awesome/rc.lua ~/.config/awesome/rc.lua.old
 wget -P ~/.config/awesome/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/awesome/rc.lua
+
+[ -f ~/.config/awesome/theme.lua ] && mv ~/.config/awesome/theme.lua ~/.config/awesome/theme.lua.old
+wget -P ~/.config/awesome/ https://raw.githubusetheme.com/TrialAndErrror/dotfiles/main/.config/awesome/theme.lua
+
+[ -f ~/.config/rofi/config.rasi ] && mv ~/.config/rofi/config.rasi ~/.config/rofi/config.rasi.old
 wget -P ~/.config/rofi/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/rofi/config.rasi
+
+[ -f ~/.config/xfce4/terminal/terminalrc ] && mv ~/.config/xfce4/terminal/terminalrc ~/.config/xfce4/terminal/terminalrc.old
 wget -P ~/.config/xfce4/terminal https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/xfce4/terminal/terminalrc
+
 #+END_SRC
 
-=terminalrc= just has one extra setting for removing scrollbars from the terminal.
-=rofi= controls the run menu
-
+These commands are included in the `setup_config.sh` script. If you can run that from start to finish without errors, then congrats! You're done. Now restart the machine and switch your desktop environment to the "Awesome" desktop environment and
 ** Optional Extras
+
+*** Setup applications
+Included in this repo is a shell script for installing common applications. Some of them have preconfigured shortcuts, while others are just nice to have. If you don't want to install non-FOSS software, change the included variable to skip installing them.
+
+#+BEGIN_SRC bash :tangle setup_applications.sh
+#!/bin/bash
+
+INSTALL_UNFREE=1
+
+# Devtools
+nix profile install \
+
+    # file system tools
+    bat  \
+    fd  \
+    eza  \
+
+    # environment management
+    pipenv \
+
+    # stuff
+    mu  \
+    dua \
+
+    # formatters and linters
+    nixfmt \
+    isort \
+    python311Packages.pytest \
+    python311Packages.nose \
+
+    # version control
+    gh  \
+    jujutsu \
+
+# Applications
+[ -n "$INSTALL_UNFREE" ] && nix profile install \
+    jetbrains.pycharm-professional \
+    jetbrains.datagrip \
+    gitkraken \
+
+#+END_SRC
 
 *** Setup emacs transparency
 - =(add-to-list 'default-frame-alist '(alpha . 90))= added to your doom emacs =config.el= will do the trick
@@ -47,7 +103,6 @@ wget -P ~/.config/xfce4/terminal https://raw.githubusercontent.com/TrialAndErrro
 - =(scroll-bar-mode -1)= to get rid of that obtrusive scroll bar
 
 *** Add Themes
-
 Check out the cool themes over at [[https://github.com/newmanls/rofi-themes-collection][rofi-themes-collection]]
 
 ** Usage
