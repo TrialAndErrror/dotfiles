@@ -18,7 +18,7 @@ sudo nala install awesome compton nitrogen xfce4-terminal rofi arandr
 #+END_SRC
 
 If you don't use [[https://github.com/volitank/nala][nala]], then you should consider using it. It's pretty great.
-But if you can't, apt should work just fine for these.
+But if you can't, apt will work just fine.
 
 [[https://github.com/haad/arandr][arandr]] isn't required but it's an easy way to fix display issues.
 
@@ -26,19 +26,28 @@ If you don't use emacs, set =$EDITOR= in your shell config to have it open thing
 
 ** Collect Dotfiles from this repo
 - ~/.config/awesome/rc.lua
+- ~/.config/awesome/theme.lua
 - ~/.config/rofi/config.rasi
 - ~/.config/xfce4/terminal/terminalrc
 
-Example:
+During the download process, it will copy any existing config files with an =.old= extension, so that you can recover any configs that would have been overwritten.
+
 #+BEGIN_SRC bash
+[ -f ~/.config/awesome/rc.lua ] && mv ~/.config/awesome/rc.lua ~/.config/awesome/rc.lua.old
 wget -P ~/.config/awesome/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/awesome/rc.lua
+
+[ -f ~/.config/awesome/theme.lua ] && mv ~/.config/awesome/theme.lua ~/.config/awesome/theme.lua.old
+wget -P ~/.config/awesome/ https://raw.githubusetheme.com/TrialAndErrror/dotfiles/main/.config/awesome/theme.lua
+
+[ -f ~/.config/rofi/config.rasi ] && mv ~/.config/rofi/config.rasi ~/.config/rofi/config.rasi.old
 wget -P ~/.config/rofi/ https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/rofi/config.rasi
+
+[ -f ~/.config/xfce4/terminal/terminalrc ] && mv ~/.config/xfce4/terminal/terminalrc ~/.config/xfce4/terminal/terminalrc.old
 wget -P ~/.config/xfce4/terminal https://raw.githubusercontent.com/TrialAndErrror/dotfiles/main/.config/xfce4/terminal/terminalrc
+
 #+END_SRC
 
-=terminalrc= just has one extra setting for removing scrollbars from the terminal.
-=rofi= controls the run menu
-
+These commands are included in the `setup_config.sh` script. If you can run that from start to finish without errors, then congrats! You're done. Now restart the machine and switch your desktop environment to the "Awesome" desktop environment and
 ** Optional Extras
 
 *** Setup emacs transparency
@@ -47,7 +56,6 @@ wget -P ~/.config/xfce4/terminal https://raw.githubusercontent.com/TrialAndErrro
 - =(scroll-bar-mode -1)= to get rid of that obtrusive scroll bar
 
 *** Add Themes
-
 Check out the cool themes over at [[https://github.com/newmanls/rofi-themes-collection][rofi-themes-collection]]
 
 ** Usage
