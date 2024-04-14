@@ -59,6 +59,10 @@ browser = os.getenv("BROWSER") or "firefox"
 editor_cmd = terminal .. editor
 browser_cmd = terminal .. browser
 
+default_ide_command = terminal .. "pycharm-professional"
+default_db_command = terminal .. "datagrip"
+default_git_command = terminal .. "gitkraken"
+
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
 -- If you do not like this or do not have such a key,
@@ -286,6 +290,14 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "b", function () awful.spawn(browser) end,
               {description = "open default browser", group = "launcher"}),
 
+    awful.key({ modkey, "Shift"   }, "p", function () awful.spawn(default_ide_command) end,
+              {description = "open default IDE", group = "launcher"}),
+
+    awful.key({ modkey, "Shift"   }, "d", function () awful.spawn(default_db_command) end,
+              {description = "open default DB explorer", group = "launcher"}),
+
+    awful.key({ modkey, "Shift"   }, "g", function () awful.spawn(default_git_command) end,
+              {description = "open default Git explorer", group = "launcher"}),
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
