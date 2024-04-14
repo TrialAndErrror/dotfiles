@@ -1,15 +1,17 @@
 #!/bin/bash
-#
+
 INSTALL_UNFREE=1
 
-# devtools
+# Devtools
 nix profile install \
-    pipenv \
 
     # file system tools
     bat  \
     fd  \
     eza  \
+
+    # environment management
+    pipenv \
 
     # stuff
     mu  \
@@ -30,4 +32,3 @@ nix profile install \
     jetbrains.pycharm-professional \
     jetbrains.datagrip \
     gitkraken \
-    inkscape  \
