@@ -65,36 +65,22 @@ Included in this repo is a shell script for installing common applications. Some
 INSTALL_UNFREE=1
 
 # Devtools
-nix profile install \
 
-    # file system tools
-    bat  \
-    fd  \
-    eza  \
+echo "Installing file system tools..."
+nix profile install nixpkgs#bat nixpkgs#fd nixpkgs#eza nixpkgs#pipenv
 
-    # environment management
-    pipenv \
+echo "Installing utilities"
+nix profile install nixpkgs#mu nixpkgs#dua nixpkgs#nushell
 
-    # stuff
-    mu  \
-    dua \
+echo "Installing formatters and linters"
+nix profile install nixpkgs#nixfmt nixpkgs#isort nixpkgs#python311Packages.pytest nixpkgs#python311Packages.nose
 
-    # formatters and linters
-    nixfmt \
-    isort \
-    python311Packages.pytest \
-    python311Packages.nose \
 
-    # version control
-    gh  \
-    jujutsu \
+echo "Installing version control tools"
+nix profile install nixpkgs#gh nixpkgs#jujutsu
 
 # Applications
-[ -n "$INSTALL_UNFREE" ] && nix profile install \
-    jetbrains.pycharm-professional \
-    jetbrains.datagrip \
-    gitkraken \
-
+[ -n "$INSTALL_UNFREE" ] && nix profile install nixpkgs#jetbrains.pycharm-professional nixpkgs#jetbrains.datagrip nixpkgs#gitkraken
 #+END_SRC
 
 *** Setup emacs transparency
