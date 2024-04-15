@@ -1,6 +1,6 @@
 
 * Overview
-It's a dotfiles repo, so it's got dotfiles in it.
+This is the step-by-step guide to setting up my window manager and toolset
 
 * Setting up Awesome Window Manager
 This setup includes steps for doom emacs, but you can safely skip those if you don't use it.
@@ -59,6 +59,8 @@ These commands are included in the `setup_config.sh` script. If you can run that
 *** Setup applications
 Included in this repo is a shell script for installing common applications. Some of them have preconfigured shortcuts, while others are just nice to have. If you don't want to install non-FOSS software, change the included variable to skip installing them.
 
+These will all be installed into your active nix profile. If you don't have nix set up, I recommend the Zero-to-Nix quick-start guide here: https://zero-to-nix.com/start/install. Their tutorial will get you up and running in minutes.
+
 #+BEGIN_SRC bash :tangle setup_applications.sh
 #!/bin/bash
 
@@ -73,20 +75,24 @@ echo "Installing utilities"
 nix profile install nixpkgs#mu nixpkgs#dua nixpkgs#nushell
 
 echo "Installing formatters and linters"
-nix profile install nixpkgs#nixfmt nixpkgs#isort nixpkgs#python311Packages.pytest nixpkgs#python311Packages.nose
+nix profile install nixpkgs#nixfmt-classic nixpkgs#isort nixpkgs#python311Packages.pytest nixpkgs#python311Packages.nose
 
 
 echo "Installing version control tools"
 nix profile install nixpkgs#gh nixpkgs#jujutsu
 
 # Applications
-[ -n "$INSTALL_UNFREE" ] && nix profile install nixpkgs#jetbrains.pycharm-professional nixpkgs#jetbrains.datagrip nixpkgs#gitkraken
+[ -n "$INSTALL_UNFREE" ] && export NIXPKGS_ALLOW_UNFREE=1 && nix profile install --impure nixpkgs#jetbrains.pycharm-professional nixpkgs#jetbrains.datagrip nixpkgs#gitkraken
 #+END_SRC
 
 *** Setup emacs transparency
+In order to prettify your doom emacs:
 - =(add-to-list 'default-frame-alist '(alpha . 90))= added to your doom emacs =config.el= will do the trick
   - Alternatively, =(setq default-frame-alist '((alpha . 90)))= seems to work.
 - =(scroll-bar-mode -1)= to get rid of that obtrusive scroll bar
+
+If you run into issues, check that compton is working properly; that's what we're using for a compositor.
+https://github.com/chjj/compton
 
 *** Add Themes
 Check out the cool themes over at [[https://github.com/newmanls/rofi-themes-collection][rofi-themes-collection]]
