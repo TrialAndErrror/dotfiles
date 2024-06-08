@@ -80,10 +80,10 @@ awful.layout.layouts = {
     -- awful.layout.suit.fair.horizontal,
     -- awful.layout.suit.spiral,
     -- awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
+    -- awful.layout.suit.max,
     -- awful.layout.suit.max.fullscreen,
     -- awful.layout.suit.magnifier,
-    awful.layout.suit.floating,
+    -- awful.layout.suit.floating,
     -- awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
     -- awful.layout.suit.corner.sw,
@@ -340,6 +340,8 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "r", function () awful.util.spawn("rofi -show run")                     end,
               {description = "show menubar", group = "launcher"}),
 
+    awful.key({ modkey, "Shift" }, "r", function () awful.util.spawn("rofi -show drun")                     end,
+              {description = "show menubar", group = "launcher"}),
 
 
     awful.key({ modkey }, "x",
@@ -393,12 +395,32 @@ clientkeys = gears.table.join(
             c:raise()
         end ,
         {description = "(un)maximize vertically", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "m",
+    awful.key( { }, "XF86MonBrightnessDown",
         function (c)
-            c.maximized_horizontal = not c.maximized_horizontal
+            awful.spawn.with_shell("brightnessctl set 10%")
+        end ,
+        {description = "Brightness Down", group = "client"}),
+    awful.key( { }, "XF86MonBrightnessUp",
+        function (c)
+            awful.spawn.with_shell("brightnessctl set 60%")
+        end ,
+        {description = "Brightness Up", group = "client"}),
+    awful.key( { "Shift" }, "XF86MonBrightnessDown",
+        function (c)
+            awful.spawn.with_shell("brightnessctl set 10-%")
+        end ,
+        {description = "Brightness Down", group = "client"}),
+    awful.key( { "Shift" }, "XF86MonBrightnessUp",
+        function (c)
+            awful.spawn.with_shell("brightnessctl set +10%")
+        end ,
+        {description = "Brightness Up", group = "client"}),
+    awful.key({ modkey, "Control" }, "m",
+        function (c)
+            c.maximized_vertical = not c.maximized_vertical
             c:raise()
         end ,
-        {description = "(un)maximize horizontally", group = "client"})
+        {description = "(un)maximize vertically", group = "client"})
 )
 
 -- Bind all key numbers to tags.
