@@ -85,6 +85,16 @@ nix profile install nixpkgs#gh nixpkgs#jujutsu
 [ -n "$INSTALL_UNFREE" ] && export NIXPKGS_ALLOW_UNFREE=1 && nix profile install --impure nixpkgs#jetbrains.pycharm-professional nixpkgs#jetbrains.datagrip nixpkgs#gitkraken
 #+END_SRC
 
+*** Rofi Extras
+If you're looking for more shortcuts to common tasks, I like to use [[https://github.com/adi1090x/rofi][this collection of rofi menu scripts]] for quick access to shortcuts, power options, and more
+
+#+BEGIN_SRC bash :tangle setup_applications.sh
+
+git clone --depth=1 -C ~/Downloads https://github.com/adi1090x/rofi.git
+cd ~/Downloads/rofi
+bash setup.sh
+#+END_SRC
+
 *** Setup emacs transparency
 In order to prettify your doom emacs:
 - =(add-to-list 'default-frame-alist '(alpha . 90))= added to your doom emacs =config.el= will do the trick
