@@ -18,6 +18,11 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- My custom packages
+local battery_widget = require("battery-widget")
+-- https://github.com/deficient/battery-widget
+
+
 -- Load Debian menu entries
 local debian = require("debian.menu")
 local has_fdo, freedesktop = pcall(require, "freedesktop")
@@ -50,7 +55,7 @@ end
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 -- TODO: Set up correct desktops
-beautiful.init("~/.config/awesome/theme.lua")
+beautiful.init("/home/wade/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "xfce4-terminal"
@@ -58,10 +63,6 @@ editor = os.getenv("EDITOR") or "emacsclient -c -a ''"
 browser = os.getenv("BROWSER") or "firefox"
 editor_cmd = terminal .. editor
 browser_cmd = terminal .. browser
-
-default_ide_command = terminal .. "pycharm-professional"
-default_db_command = terminal .. "datagrip"
-default_git_command = terminal .. "gitkraken"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -103,6 +104,11 @@ myawesomemenu = {
 
 local menu_awesome = { "awesome", myawesomemenu, beautiful.awesome_icon }
 local menu_terminal = { "open terminal", terminal }
+
+local drun_theme = "~/.config/rofi/launchers/type-1/style-6.rasi"
+local powermenu_command = "bash ~/.config/rofi/powermenu/type-1/powermenu.sh"
+local screenshot_command = "bash ~/.config/rofi/applets/bin/screenshot.sh"
+local wifi_command = "~/.config/rofi/custom/rofi_wifi.sh"
 
 if has_fdo then
     mymainmenu = freedesktop.menu.build({
@@ -221,7 +227,9 @@ awful.screen.connect_for_each_screen(function(s)
             mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
-            s.mylayoutbox,
+            battery_widget {
+                -- pass options here
+            },
         },
     }
 end)
@@ -290,22 +298,14 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "b", function () awful.spawn(browser) end,
               {description = "open default browser", group = "launcher"}),
 
-    awful.key({ modkey, "Shift"   }, "p", function () awful.spawn(default_ide_command) end,
-              {description = "open default IDE", group = "launcher"}),
-
-    awful.key({ modkey, "Shift"   }, "d", function () awful.spawn(default_db_command) end,
-              {description = "open default DB explorer", group = "launcher"}),
-
-    awful.key({ modkey, "Shift"   }, "g", function () awful.spawn(default_git_command) end,
-              {description = "open default Git explorer", group = "launcher"}),
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
-              {description = "quit awesome", group = "awesome"}),
+    awful.key({ modkey, "Shift"   }, "q", function () awful.spawn.with_shell(powermenu_command) end,
+              {description = "Power Options", group = "awesome"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
@@ -336,11 +336,7 @@ globalkeys = gears.table.join(
               end,
               {description = "restore minimized", group = "client"}),
 
-    -- Prompt
-    awful.key({ modkey }, "r", function () awful.util.spawn("rofi -show run")                     end,
-              {description = "show menubar", group = "launcher"}),
-
-    awful.key({ modkey, "Shift" }, "r", function () awful.util.spawn("rofi -show drun")                     end,
+    awful.key({ modkey, }, "r", function () awful.spawn.with_shell("rofi -show drun -theme " .. drun_theme)                     end,
               {description = "show menubar", group = "launcher"}),
 
 
@@ -358,6 +354,25 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"})
 )
+
+function notifyCurrentVolume()
+    awful.spawn.easy_async("pactl get-sink-volume 45", function(stdout, stderr, reason, exit_code)
+        -- Pattern to capture the percentage volume amount
+        local volume = stdout:match("(%d+%%)")
+        if volume then
+            naughty.notify({ title = "Volume", text = "Current volume: " .. volume })
+        else
+            naughty.notify({ title = "Volume", text = "Unable to get volume" })
+        end
+    end)
+end
+
+function notifyMuteStatus()
+    awful.spawn.easy_async("pactl get-sink-mute 45", function(stdout, stderr, reason, exit_code)
+        local is_muted = stdout:match("yes") and "Muted" or "Unmuted"
+        naughty.notify({ title = "Sound", text = "Volume " .. is_muted })
+    end)
+end
 
 clientkeys = gears.table.join(
     awful.key({ modkey,           }, "f",
@@ -395,16 +410,27 @@ clientkeys = gears.table.join(
             c:raise()
         end ,
         {description = "(un)maximize vertically", group = "client"}),
+
+
+    -- My custom commands
+    awful.key({ modkey, "Shift"   }, "s",      function () awful.spawn.with_shell(screenshot_command) end,
+              {description = "Screenshot Menu", group = "client"}),
+
+    awful.key( { }, "XF86RFKill",
+        function (c)
+            awful.spawn.with_shell(wifi_command)
+        end ,
+        {description = "Brightness Low", group = "client"}),
     awful.key( { }, "XF86MonBrightnessDown",
         function (c)
             awful.spawn.with_shell("brightnessctl set 10%")
         end ,
-        {description = "Brightness Down", group = "client"}),
+        {description = "Brightness Low", group = "client"}),
     awful.key( { }, "XF86MonBrightnessUp",
         function (c)
             awful.spawn.with_shell("brightnessctl set 60%")
         end ,
-        {description = "Brightness Up", group = "client"}),
+        {description = "Brightness High", group = "client"}),
     awful.key( { "Shift" }, "XF86MonBrightnessDown",
         function (c)
             awful.spawn.with_shell("brightnessctl set 10-%")
@@ -415,6 +441,28 @@ clientkeys = gears.table.join(
             awful.spawn.with_shell("brightnessctl set +10%")
         end ,
         {description = "Brightness Up", group = "client"}),
+
+    awful.key( { }, "XF86AudioRaiseVolume",
+        function (c)
+            awful.spawn.easy_async("pactl -- set-sink-volume 45 +10%", notifyCurrentVolume)
+        end ,
+        {description = "Volume Up", group = "client"}
+    ),
+
+    awful.key( { }, "XF86AudioLowerVolume",
+        function (c)
+            awful.spawn.easy_async("pactl -- set-sink-volume 45 -10%", notifyCurrentVolume)
+        end ,
+        {description = "Volume Down", group = "client"}
+    ),
+
+    awful.key( { }, "XF86AudioMute",
+        function (c)
+            awful.spawn.easy_async("pactl set-sink-mute 45 toggle", notifyMuteStatus)
+        end,
+        {description = "Volume Down", group = "client"}
+    ),
+
     awful.key({ modkey, "Control" }, "m",
         function (c)
             c.maximized_vertical = not c.maximized_vertical
@@ -613,6 +661,11 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
+-- Configure display
+awful.spawn.with_shell("bash /home/wade/.screenlayout/default.sh")
+awful.spawn.with_shell("xev -version")
+
+--
 -- Autostart Applications
 awful.spawn.with_shell("bash ~/.config/awesome/autorun.sh")
 
