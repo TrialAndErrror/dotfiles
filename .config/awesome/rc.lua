@@ -83,11 +83,26 @@ myawesomemenu = {
    { "quit", function() awesome.quit() end },
 }
 
-mymainmenu = awful.menu({ items = {
-                              { "awesome", myawesomemenu, beautiful.awesome_icon },
-                              { "open terminal", terminal }
-                        }
-                    })
+editorsmenu = {
+        { "Emacs",  function() awful.spawn.with_shell("emacs") end},
+        { "Python", function() awful.spawn.with_shell("pycharm.sh") end},
+        { "Go",  function() awful.spawn.with_shell("goland.sh") end},
+        { "JavaScript",  function() awful.spawn.with_shell("webstorm.sh") end},
+        { "Databases", function() awful.spawn.with_shell("datagrip.sh") end},
+}
+
+mymainmenu = awful.menu(
+    { items = {
+        { "awesome", myawesomemenu, beautiful.awesome_icon },
+        { "editors", editorsmenu },
+        { "squid", "gitkraken"},
+        { "volume", function() awful.spawn.with_shell("GTK_THEME=Matcha-dark-pueril pavucontrol") end },
+        { "web", browser },
+        { "files", "caja" },
+        { "open terminal", terminal },
+        }
+    }
+)
 
 mylauncher =  wibox.widget {
         {
@@ -246,7 +261,7 @@ awful.screen.connect_for_each_screen(function(s)
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, height = 50, name = "topbar", bg = "#00000000"})
+    s.mywibox = awful.wibar({ position = "bottom", screen = s, height = 50, name = "topbar", bg = "#00000000"})
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -254,22 +269,27 @@ awful.screen.connect_for_each_screen(function(s)
         {
             layout = wibox.layout.align.horizontal,
             mylauncher,
-            margins = 9,
-
+            styled_section({
+                layout = wibox.layout.fixed.horizontal,
+                s.mytaglist,
+                s.mypromptbox,
+            }),
+            styled_section(s.mytasklist),
         },
-        styled_section({
+        nil,
+        {
             layout = wibox.layout.fixed.horizontal,
-            s.mytaglist,
-            s.mypromptbox,
-            s.mytasklist,
-        }),
+            styled_section({
+                layout = wibox.layout.fixed.horizontal,
+                wibox.widget.systray(),
+                mytextclock,
+            }),
+            styled_section({
+                layout = wibox.layout.fixed.horizontal,
+                battery_widget{},
+            }),
+        }
 
-        styled_section({ -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            wibox.widget.systray(),
-            mytextclock,
-            battery_widget{}
-        }),
     }
 end)
 -- }}}
