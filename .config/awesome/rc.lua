@@ -18,13 +18,10 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
--- Load Debian menu entries
-local debian = require("debian.menu")
-local has_fdo, freedesktop = pcall(require, "freedesktop")
 
 -- My custom packages
 local battery_widget = require("battery-widget")
--- https://github.com/deficient/battery-widget
+-- https://github.c
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -53,19 +50,14 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
--- TODO: Set up correct desktops
-beautiful.init("~/.config/awesome/theme.lua")
+beautiful.init("/home/wade/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "xfce4-terminal"
-editor = os.getenv("EDITOR") or "emacsclient -c -a ''"
-browser = os.getenv("BROWSER") or "firefox"
+editor = os.getenv("EDITOR") or "emacs"
+browser = os.getenv("BROWSER") or "zen"
 editor_cmd = terminal .. editor
 browser_cmd = terminal .. browser
-
-default_ide_command = terminal .. "pycharm-professional"
-default_db_command = terminal .. "datagrip"
-default_git_command = terminal .. "gitkraken"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -76,22 +68,8 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    awful.layout.suit.tile.left,
     awful.layout.suit.tile,
-    -- awful.layout.suit.tile.bottom,
-    -- awful.layout.suit.tile.top,
-    -- awful.layout.suit.fair,
-    -- awful.layout.suit.fair.horizontal,
-    -- awful.layout.suit.spiral,
-    -- awful.layout.suit.spiral.dwindle,
-    -- awful.layout.suit.max,
-    -- awful.layout.suit.max.fullscreen,
-    -- awful.layout.suit.magnifier,
-    -- awful.layout.suit.floating,
-    -- awful.layout.suit.corner.nw,
-    -- awful.layout.suit.corner.ne,
-    -- awful.layout.suit.corner.sw,
-    -- awful.layout.suit.corner.se,
+    awful.layout.suit.tile.left,
 }
 -- }}}
 
@@ -105,27 +83,45 @@ myawesomemenu = {
    { "quit", function() awesome.quit() end },
 }
 
-local menu_awesome = { "awesome", myawesomemenu, beautiful.awesome_icon }
-local menu_terminal = { "open terminal", terminal }
+editorsmenu = {
+        { "Emacs",  function() awful.spawn.with_shell("emacs") end},
+        { "Python", function() awful.spawn.with_shell("pycharm.sh") end},
+        { "Go",  function() awful.spawn.with_shell("goland.sh") end},
+        { "JavaScript",  function() awful.spawn.with_shell("webstorm.sh") end},
+        { "Databases", function() awful.spawn.with_shell("datagrip.sh") end},
+}
 
-if has_fdo then
-    mymainmenu = freedesktop.menu.build({
-        before = { menu_awesome },
-        after =  { menu_terminal }
-    })
-else
-    mymainmenu = awful.menu({
-        items = {
-                  menu_awesome,
-                  { "Debian", debian.menu.Debian_menu.Debian },
-                  menu_terminal,
-                }
-    })
-end
+mymainmenu = awful.menu(
+    { items = {
+        { "awesome", myawesomemenu, beautiful.awesome_icon },
+        { "editors", editorsmenu },
+        { "squid", "gitkraken"},
+        { "volume", function() awful.spawn.with_shell("GTK_THEME=Matcha-dark-pueril pavucontrol") end },
+        { "web", browser },
+        { "files", "caja" },
+        { "open terminal", terminal },
+        }
+    }
+)
 
+mylauncher =  wibox.widget {
+        {
+            awful.widget.launcher({
+                image = gears.surface.load_uncached(gears.filesystem.get_configuration_dir() .. "icons/logo.png"),
+                menu = mymainmenu
+            }),
+            margins = 2,
+            widget = wibox.container.margin
+        },
+        bg = bg_color or "#333333",
+        shape = gears.shape.rounded_bar,
+        widget = wibox.container.background
+}
 
-mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
+local drun_theme = "~/.config/rofi/launchers/type-1/style-6.rasi"
+local powermenu_command = "bash ~/.config/rofi/powermenu/type-1/powermenu.sh"
+local screenshot_command = "bash ~/.config/rofi/applets/bin/screenshot.sh"
+local wifi_command = "~/.config/rofi/custom/rofi_wifi.sh"
 
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
@@ -178,10 +174,30 @@ local tasklist_buttons = gears.table.join(
                                               awful.client.focus.byidx(-1)
                                           end))
 
+local function with_margin(widget, left, right, top, bottom)
+    return wibox.container.margin(widget, left or 5, right or 5, top or 3, bottom or 3)
+end
+local function with_styled_bg(widget, bg_color)
+    return wibox.widget {
+        {
+            widget,
+            margins = 9,
+            widget = wibox.container.margin
+        },
+        bg = bg_color or "#333333",
+        shape = gears.shape.rounded_bar,
+        widget = wibox.container.background
+    }
+end
+
+local function styled_section(widget, bg_color)
+    return with_margin(with_styled_bg(widget, bg_color))
+end
+
 awful.screen.connect_for_each_screen(function(s)
+
     -- Each screen has its own tag table.
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
-    -- TODO: Set up layouts here
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -197,36 +213,83 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.all,
-        buttons = taglist_buttons
+        buttons = taglist_buttons,
+        widget_template = {
+            {
+                {
+                    {
+                        id     = "text_role",
+                        widget = wibox.widget.textbox,
+                    },
+                    left   = 8,
+                    right  = 8,
+                    widget = wibox.container.margin,
+                },
+                id     = "background_role",
+                widget = wibox.container.background,
+            },
+            shape  = gears.shape.rounded_bar,      -- ✅ rounds the highlight
+            shape_clip = true,
+            widget = wibox.container.background,
+        },
     }
 
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
         filter  = awful.widget.tasklist.filter.currenttags,
-        buttons = tasklist_buttons
+        buttons = tasklist_buttons,
+
+        widget_template = {
+            {
+                {
+                    {
+                        id     = "text_role",
+                        widget = wibox.widget.textbox,
+                    },
+                    left   = 8,
+                    right  = 8,
+                    widget = wibox.container.margin,
+                },
+                id     = "background_role",
+                widget = wibox.container.background,
+            },
+            shape  = gears.shape.rounded_bar,      -- ✅ rounds the highlight
+            shape_clip = true,
+            widget = wibox.container.background,
+        },
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    s.mywibox = awful.wibar({ position = "bottom", screen = s, height = 50, name = "topbar", bg = "#00000000"})
 
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
-        { -- Left widgets
-            layout = wibox.layout.fixed.horizontal,
+        {
+            layout = wibox.layout.align.horizontal,
             mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
+            styled_section({
+                layout = wibox.layout.fixed.horizontal,
+                s.mytaglist,
+                s.mypromptbox,
+            }),
+            styled_section(s.mytasklist),
         },
-        s.mytasklist, -- Middle widget
-        { -- Right widgets
+        nil,
+        {
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
-            wibox.widget.systray(),
-            mytextclock,
-            battery_widget,
-        },
+            styled_section({
+                layout = wibox.layout.fixed.horizontal,
+                wibox.widget.systray(),
+                mytextclock,
+            }),
+            styled_section({
+                layout = wibox.layout.fixed.horizontal,
+                battery_widget{},
+            }),
+        }
+
     }
 end)
 -- }}}
@@ -241,7 +304,6 @@ root.buttons(gears.table.join(
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
-    -- TODO: Check on keybindings
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
@@ -286,7 +348,6 @@ globalkeys = gears.table.join(
         end,
         {description = "go back", group = "client"}),
 
-
     -- Custom Keys
     awful.key({ modkey,           }, "e", function () awful.spawn(editor) end,
               {description = "open default editor", group = "launcher"}),
@@ -294,22 +355,15 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "b", function () awful.spawn(browser) end,
               {description = "open default browser", group = "launcher"}),
 
-    awful.key({ modkey, "Shift"   }, "p", function () awful.spawn(default_ide_command) end,
-              {description = "open default IDE", group = "launcher"}),
-
-    awful.key({ modkey, "Shift"   }, "d", function () awful.spawn(default_db_command) end,
-              {description = "open default DB explorer", group = "launcher"}),
-
-    awful.key({ modkey, "Shift"   }, "g", function () awful.spawn(default_git_command) end,
-              {description = "open default Git explorer", group = "launcher"}),
-
+    awful.key({ modkey, "Shift"   }, "e", function () awful.spawn.with_shell("caja") end,
+              {description = "open default explorer", group = "launcher"}),
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
-              {description = "quit awesome", group = "awesome"}),
+    awful.key({ modkey, "Shift"   }, "q", function () awful.spawn.with_shell(powermenu_command) end,
+              {description = "Power Options", group = "awesome"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
@@ -341,12 +395,8 @@ globalkeys = gears.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Prompt
-    awful.key({ modkey }, "r", function () awful.util.spawn("rofi -show run")                     end,
+    awful.key({ modkey, }, "r", function () awful.spawn.with_shell("rofi -show drun -theme " .. drun_theme)                     end,
               {description = "show menubar", group = "launcher"}),
-
-    awful.key({ modkey, "Shift" }, "r", function () awful.util.spawn("rofi -show drun")                     end,
-              {description = "show menubar", group = "launcher"}),
-
 
     awful.key({ modkey }, "x",
               function ()
@@ -362,6 +412,27 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"})
 )
+
+
+function notifyCurrentVolume()
+    awful.spawn.easy_async("pactl get-sink-volume @DEFAULT_SINK@", function(stdout, stderr, reason, exit_code)
+        -- Pattern to capture the percentage volume amount
+        local volume = stdout:match("(%d+%%)")
+        if volume then
+            naughty.notify({ title = "Volume", text = "Current volume: " .. volume })
+        else
+            naughty.notify({ title = "Volume", text = "Unable to get volume" })
+        end
+    end)
+end
+
+function notifyMuteStatus()
+    awful.spawn.easy_async("pactl get-sink-mute @DEFAULT_SINK@", function(stdout, stderr, reason, exit_code)
+        local is_muted = stdout:match("yes") and "Muted" or "Unmuted"
+        naughty.notify({ title = "Sound", text = "Volume " .. is_muted })
+    end)
+end
+
 
 clientkeys = gears.table.join(
     awful.key({ modkey,           }, "f",
@@ -399,16 +470,37 @@ clientkeys = gears.table.join(
             c:raise()
         end ,
         {description = "(un)maximize vertically", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "m",
+        function (c)
+            c.maximized_horizontal = not c.maximized_horizontal
+            c:raise()
+        end ,
+        {description = "(un)maximize horizontally", group = "client"}
+    ),
+
+    -- My custom commands
+    awful.key({ modkey, "Shift"   }, "s",      function () awful.spawn.with_shell("flameshot") end,
+              {description = "Screenshot Menu", group = "client"}),
+
+    awful.key({ modkey, "Shift"   }, "b",      function () awful.spawn.with_shell("rofi-bluetooth") end,
+              {description = "Bluetooth Menu", group = "client"}),
+
+    awful.key({ modkey, "Shift"   }, "w",      function () awful.spawn.with_shell("~/scripts/window_switcher.sh") end,
+              {description = "Switch screen layout", group = "client"}),
+
+    awful.key({ modkey, "Shift"  }, "i",      function (c) awful.spawn.with_shell(wifi_command) end ,
+              {description = "Brightness Low", group = "client"}),
+
     awful.key( { }, "XF86MonBrightnessDown",
         function (c)
-            awful.spawn.with_shell("brightnessctl set 10%")
+            awful.spawn.with_shell("brightnessctl set 10% && xrandr --output eDP-1 --brightness .3")
         end ,
-        {description = "Brightness Down", group = "client"}),
+        {description = "Brightness Low", group = "client"}),
     awful.key( { }, "XF86MonBrightnessUp",
         function (c)
-            awful.spawn.with_shell("brightnessctl set 60%")
+            awful.spawn.with_shell("brightnessctl set 60% && xrandr --output eDP-1 --brightness 1")
         end ,
-        {description = "Brightness Up", group = "client"}),
+        {description = "Brightness High", group = "client"}),
     awful.key( { "Shift" }, "XF86MonBrightnessDown",
         function (c)
             awful.spawn.with_shell("brightnessctl set 10-%")
@@ -419,14 +511,30 @@ clientkeys = gears.table.join(
             awful.spawn.with_shell("brightnessctl set +10%")
         end ,
         {description = "Brightness Up", group = "client"}),
-    awful.key({ modkey, "Control" }, "m",
-        function (c)
-            c.maximized_vertical = not c.maximized_vertical
-            c:raise()
-        end ,
-        {description = "(un)maximize vertically", group = "client"})
-)
 
+    awful.key( { }, "XF86AudioRaiseVolume",
+        function (c)
+            awful.spawn.easy_async("pactl -- set-sink-volume @DEFAULT_SINK@ +10%", notifyCurrentVolume)
+        end ,
+        {description = "Volume Up", group = "client"}
+    ),
+
+    awful.key( { }, "XF86AudioLowerVolume",
+        function (c)
+            awful.spawn.easy_async("pactl -- set-sink-volume @DEFAULT_SINK@ -10%", notifyCurrentVolume)
+        end ,
+        {description = "Volume Down", group = "client"}
+    ),
+
+    awful.key( { }, "XF86AudioMute",
+        function (c)
+            awful.spawn.easy_async("pactl set-sink-mute @DEFAULT_SINK@ toggle", notifyMuteStatus)
+        end,
+        {description = "Volume Down", group = "client"}
+    )
+
+
+)
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it work on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
@@ -544,7 +652,7 @@ awful.rules.rules = {
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = false }
+      }, properties = { titlebars_enabled = true }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -568,45 +676,6 @@ client.connect_signal("manage", function (c)
     end
 end)
 
--- Add a titlebar if titlebars_enabled is set to true in the rules.
-client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({ }, 1, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ }, 3, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.resize(c)
-        end)
-    )
-
-    awful.titlebar(c) : setup {
-        { -- Left
-            awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
-            layout  = wibox.layout.fixed.horizontal
-        },
-        { -- Middle
-            { -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
-            },
-            buttons = buttons,
-            layout  = wibox.layout.flex.horizontal
-        },
-        { -- Right
-            awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.maximizedbutton(c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
-            awful.titlebar.widget.closebutton    (c),
-            layout = wibox.layout.fixed.horizontal()
-        },
-        layout = wibox.layout.align.horizontal
-    }
-end)
 
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
@@ -616,9 +685,9 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+-- Configure display
+awful.spawn.with_shell("xev -version")
 
+--
 -- Autostart Applications
 awful.spawn.with_shell("bash ~/.config/awesome/autorun.sh")
-
--- My Beautiful Settings
--- see theme.lua
