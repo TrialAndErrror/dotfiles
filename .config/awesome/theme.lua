@@ -34,7 +34,7 @@ theme.border_focus  = "#25db09"
 theme.border_marked = "#91231c"
 
 
-theme.bg_normal = "#00000000"
+theme.bg_normal = "#222222"
 
 -- There are other variable sets
 -- overriding the default one when
