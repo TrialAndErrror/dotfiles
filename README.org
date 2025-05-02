@@ -2,6 +2,11 @@
 * Overview
 This is the step-by-step guide to setting up my window manager and toolset
 
+* Screenshots
+[[https://github.com/TrialAndErrror/dotfiles/blob/4ffaae79a2e3c76140b1df93cb742f589fd8d810/screenshots/side-by-side.png]]
+
+[[https://github.com/TrialAndErrror/dotfiles/blob/4ffaae79a2e3c76140b1df93cb742f589fd8d810/screenshots/one.png]]
+[[https://github.com/TrialAndErrror/dotfiles/blob/4ffaae79a2e3c76140b1df93cb742f589fd8d810/screenshots/empty.png]]
 * Setting up Awesome Window Manager
 This setup includes steps for doom emacs, but you can safely skip those if you don't use it.
 
