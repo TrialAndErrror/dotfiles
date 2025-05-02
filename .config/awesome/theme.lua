@@ -11,7 +11,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font          = "sans 8"
+theme.font          = "sans 12"
 
 theme.bg_normal     = "#222222"
 theme.bg_focus      = "#535d6c"
@@ -25,13 +25,16 @@ theme.fg_urgent     = "#ffffff"
 theme.fg_minimize   = "#ffffff"
 
 theme.useless_gap   = dpi(4)
-theme.gap_single_client = true
+theme.gap_single_client = false
 theme.border_width  = dpi(4)
 theme.border_normal = "#000000"
 theme.border_normal = theme.bg_focus
 theme.border_focus  = "#50943a"
 theme.border_focus  = "#25db09"
 theme.border_marked = "#91231c"
+
+
+theme.bg_normal = "#00000000"
 
 -- There are other variable sets
 -- overriding the default one when
@@ -47,13 +50,12 @@ theme.border_marked = "#91231c"
 --theme.taglist_bg_focus = "#ff0000"
 
 -- Generate taglist squares:
-local taglist_square_size = dpi(4)
-theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
-    taglist_square_size, theme.fg_normal
-)
-theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
-    taglist_square_size, theme.fg_normal
-)
+local taglist_square_size = dpi(0)
+theme.taglist_bg_focus = "#ff9cf5"
+theme.taglist_fg_focus = "#000000"
+theme.taglist_fg_occupied = "#51e800"
+theme.taglist_fg_urgent = "#e0003c"
+
 
 -- Variables set for theming notifications:
 -- notification_font
@@ -65,8 +67,8 @@ theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
 -- menu_[bg|fg]_[normal|focus]
 -- menu_[border_color|border_width]
 theme.menu_submenu_icon = themes_path.."default/submenu.png"
-theme.menu_height = dpi(15)
-theme.menu_width  = dpi(100)
+theme.menu_height = dpi(30)
+theme.menu_width  = dpi(200)
 
 -- You can add as many variables as
 -- you wish and access them by using
